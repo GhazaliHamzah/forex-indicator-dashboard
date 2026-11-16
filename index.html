@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forex Indicator Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&display=swap">
+<style>
+:root {
+  --bg: #FAF6EB; --bg-deep: #F5EFDC; --card: #FFFEFB; --card-border: #F1EBD7; --line: #EBE3CE;
+  --ink: #201B12; --ink-soft: #5B5240; --gold-deep: #7C5A16;
+  --red: #A31C2B; --red-soft: #FAEBEB; --red-line: #E7BFC3;
+  --green: #0E6E4E; --green-soft: #ECF7F0; --green-line: #BFDDCF;
+  --blue: #1D4E89; --blue-soft: #EEF3FA; --blue-line: #BFD0E6;
+  --mid-line: #E2D5AE;
+  --shadow: 0 14px 34px rgba(60, 46, 12, 0.08);
+  --serif: Lora, Georgia, serif;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif; font-size: 15px; line-height: 1.45;
+}
+h1, h2 { margin: 0; font-family: var(--serif); font-weight: 600; }
+h1 { font-size: 28px; line-height: 1.2; }
+h2 { font-size: 21px; }
+button { font-family: inherit; }
+button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+.num { font-variant-numeric: tabular-nums; }
+.soft { color: var(--ink-soft); }
+.small { font-size: 13px; }
+.kicker { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold-deep); font-weight: 600; }
+.progress { display: flex; height: 3px; }
+.progress div { flex: 1; }
+header { background: #FDFBF4; border-bottom: 1px solid var(--line); padding: 18px 32px; }
+.wrap { max-width: 1240px; margin: 0 auto; }
+.head-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.symbols { display: flex; flex-wrap: wrap; gap: 8px; }
+.symbols button {
+  min-height: 44px; padding: 0 18px; border-radius: 22px; font-size: 15px; font-weight: 600; cursor: pointer;
+  background: var(--card); color: var(--ink); border: 1px solid var(--line);
+}
+.symbols button[aria-pressed="true"] { background: var(--ink); color: var(--card); border-color: var(--ink); }
+main { padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 24px; }
+.title-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px; }
+.title-left { display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px; }
+.sym-name { font-family: var(--serif); font-weight: 600; font-size: 34px; line-height: 1.1; }
+.price { font-size: 26px; font-weight: 600; }
+.tiles { display: flex; flex-wrap: wrap; gap: 16px; }
+.card { background: var(--card); border: 1px solid var(--card-border); border-radius: 16px; box-shadow: var(--shadow); }
+.tile { flex: 1 1 260px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; }
+.tile-value { font-family: var(--serif); font-weight: 600; font-size: 22px; line-height: 1.25; }
+.cols { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+.panel { padding: 22px 24px 20px; min-width: 0; }
+.panel-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 14px; }
+.scroll { overflow-x: auto; }
+.stoch { min-width: 540px; }
+.stoch-row {
+  display: grid; grid-template-columns: 96px 64px 64px minmax(150px, 1fr) 128px; column-gap: 16px;
+  align-items: center; padding: 11px 0; border-bottom: 1px solid var(--card-border);
+}
+.stoch-head { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; }
+.right { text-align: right; }
+.tf { display: flex; flex-direction: column; }
+.tf b { font-size: 16px; }
+.val { font-size: 16px; }
+.bar { position: relative; height: 12px; border-radius: 6px; background: var(--bg-deep); }
+.bar .os { position: absolute; left: 0; top: 0; bottom: 0; background: #C9D9EE; border-radius: 6px 0 0 6px; }
+.bar .ob { position: absolute; right: 0; top: 0; bottom: 0; background: #EEC9CC; border-radius: 0 6px 6px 0; }
+.bar .d { position: absolute; top: 1px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; border: 2px solid var(--ink-soft); background: var(--card); }
+.bar .k { position: absolute; top: -4px; width: 4px; height: 20px; margin-left: -2px; border-radius: 2px; background: var(--ink); }
+.pill { display: inline-block; padding: 4px 12px; border-radius: 14px; font-size: 13px; font-weight: 600; border: 1px solid; }
+.tone-high { background: var(--red-soft); color: var(--red); border-color: var(--red-line); }
+.tone-low { background: var(--blue-soft); color: var(--blue); border-color: var(--blue-line); }
+.tone-flat { background: var(--card); color: var(--ink-soft); border-color: var(--line); }
+.tone-up { background: var(--green-soft); color: var(--green); border-color: var(--green-line); }
+.tone-mid { background: var(--bg-deep); color: var(--gold-deep); border-color: var(--mid-line); }
+.legend { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 14px; }
+.levels { display: flex; flex-direction: column; gap: 6px; }
+.level { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; column-gap: 12px; align-items: center; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--card-border); }
+.level .tag { text-align: center; padding: 3px 0; border-radius: 8px; font-size: 13px; font-weight: 700; border: 0; }
+.level .name { display: flex; flex-direction: column; min-width: 0; }
+.level .lv-price, .now .lv-price { font-size: 17px; font-weight: 600; }
+.now { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 12px; border-radius: 10px; background: var(--ink); color: var(--card); font-weight: 600; }
+.trend { padding: 22px 24px; display: flex; flex-wrap: wrap; gap: 28px; align-items: stretch; }
+.trend > div { display: flex; flex-direction: column; }
+.trend-badge { display: inline-block; padding: 10px 22px; border-radius: 12px; font-family: var(--serif); font-size: 26px; font-weight: 700; border: 1px solid; }
+.check { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border: 1px solid var(--card-border); border-radius: 10px; }
+.check > div { display: flex; flex-direction: column; }
+.bars { display: flex; align-items: flex-end; gap: 6px; height: 110px; padding: 0 2px; border-bottom: 1px solid var(--line); }
+.bars div { flex: 1; background: #D9CFB0; border-radius: 4px 4px 0 0; }
+.bars div:last-child { background: var(--gold-deep); }
+.bars-axis { display: flex; justify-content: space-between; }
+.foot { border-top: 1px solid var(--line); padding-top: 14px; }
+@media (max-width: 600px) {
+  header { padding: 16px; }
+  main { padding: 20px 16px 32px; }
+  .panel, .trend { padding: 18px 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" aria-hidden="true">
+  <div style="background:#A31C2B"></div><div style="background:#A9791E"></div><div style="background:#0E6E4E"></div><div style="background:#1D4E89"></div>
+</div>
+
+<header>
+  <div class="wrap head-row">
+    <div>
+      <div class="kicker">Draft v1 &middot; Sample data, not live</div>
+      <h1>Forex Indicator Dashboard</h1>
+    </div>
+    <div class="symbols" id="symbols"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="title-row">
+    <div class="title-left">
+      <div class="sym-name" id="symName"></div>
+      <div class="price num" id="price"></div>
+      <div class="soft" style="font-size:14px">Current price</div>
+    </div>
+    <div class="soft" style="font-size:14px">Stochastic 14, 5, 3 &middot; Classic daily pivots &middot; Weekly trend on W1</div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <div class="cols">
+    <section class="card panel" style="flex:3 1 560px">
+      <div class="panel-head">
+        <div>
+          <div class="kicker">1 &middot; Stochastic by timeframe</div>
+          <h2>%K 14, %D 5, Slowing 3</h2>
+        </div>
+        <div class="soft" style="font-size:14px" id="zoneNote"></div>
+      </div>
+      <div class="scroll">
+        <div class="stoch">
+          <div class="stoch-row stoch-head">
+            <div>Timeframe</div><div class="right">%K</div><div class="right">%D</div><div>Level, 0 to 100</div><div>Status</div>
+          </div>
+          <div id="stoch"></div>
+        </div>
+      </div>
+      <div class="legend small soft">
+        <span>Solid bar = %K</span><span>Ring = %D</span><span>Blue zone = oversold</span><span>Red zone = overbought</span>
+      </div>
+    </section>
+
+    <section class="card panel" style="flex:2 1 360px">
+      <div class="panel-head">
+        <div>
+          <div class="kicker">2 &middot; Pivot, support and resistance</div>
+          <h2>Daily pivot levels</h2>
+        </div>
+      </div>
+      <div class="levels" id="levels"></div>
+      <div class="small soft" style="margin-top:14px" id="pivotNote"></div>
+    </section>
+  </div>
+
+  <section class="card trend">
+    <div style="flex:1 1 250px; gap:10px">
+      <div>
+        <div class="kicker">3 &middot; Weekly market trend</div>
+        <h2>W1 trend status</h2>
+      </div>
+      <div><span class="trend-badge" id="trendBadge"></span></div>
+      <div class="soft" style="font-size:14px">Uptrend when the weekly close is above the 20-week average and the 20-week is above the 50-week. Downtrend when both are below. Otherwise sideways.</div>
+    </div>
+    <div style="flex:2 1 320px; gap:8px" id="checks"></div>
+    <div style="flex:1 1 240px; gap:8px">
+      <div style="font-weight:600">Last 12 weekly closes</div>
+      <div class="bars" id="bars" aria-hidden="true"></div>
+      <div class="bars-axis small soft"><span>12 weeks ago</span><span>This week</span></div>
+      <div class="small soft num" id="barsNote"></div>
+    </div>
+  </section>
+
+  <div class="foot small soft">Indicator readings only. No buy or sell calls, entries or targets. All figures on this draft are sample data for layout review.</div>
+</main>
+
+<script>
+// Sample data for layout review. Replace with live readings from the MT5 bridge.
+var OVERBOUGHT = 80;
+var OVERSOLD = 20;
+
+var DATA = {
+  EURUSD: { digits: 5, pip: 0.0001, price: 1.0878, h: 1.0892, l: 1.0824, c: 1.0861,
+    st: [[86.4,81.2],[83.1,78.5],[74.6,70.3],[68.2,61.7],[55.3,49.8],[61.9,58.4],[72.5,66.1],[44.8,47.2]],
+    w: [1.0712,1.0745,1.0731,1.0768,1.0790,1.0774,1.0812,1.0835,1.0821,1.0850,1.0843,1.0878], ma20: 1.0764, ma50: 1.0702 },
+  GBPUSD: { digits: 5, pip: 0.0001, price: 1.2689, h: 1.2748, l: 1.2671, c: 1.2702,
+    st: [[14.2,18.9],[17.8,22.4],[26.5,31.0],[33.4,38.2],[41.7,45.9],[38.6,42.3],[29.4,35.8],[52.1,55.6]],
+    w: [1.2905,1.2880,1.2862,1.2871,1.2834,1.2810,1.2826,1.2779,1.2755,1.2760,1.2718,1.2689], ma20: 1.2841, ma50: 1.2893 },
+  USDJPY: { digits: 3, pip: 0.01, price: 153.47, h: 153.84, l: 152.61, c: 153.12,
+    st: [[58.3,54.1],[66.7,60.2],[79.2,73.8],[84.5,80.9],[88.1,85.3],[81.6,77.4],[76.3,71.9],[69.8,64.5]],
+    w: [149.20,149.85,150.40,150.10,151.30,151.95,151.60,152.40,152.90,152.55,153.10,153.47], ma20: 150.82, ma50: 148.95 },
+  XAUUSD: { digits: 2, pip: 0.1, price: 2660.40, h: 2684.50, l: 2651.20, c: 2672.80,
+    st: [[22.6,27.3],[18.4,21.7],[15.9,19.2],[24.8,29.5],[36.2,40.7],[47.5,51.3],[63.4,60.8],[78.9,75.2]],
+    w: [2648.00,2671.00,2655.00,2690.00,2662.00,2640.00,2675.00,2684.00,2651.00,2668.00,2679.00,2660.40], ma20: 2664.10, ma50: 2612.30 }
+};
+
+var TIMEFRAMES = [['M5','5 minutes'],['M15','15 minutes'],['M30','30 minutes'],['H1','1 hour'],['H4','4 hours'],['D1','Daily'],['W1','Weekly'],['MN','Monthly']];
+
+var current = 'EURUSD';
+
+function el(id) { return document.getElementById(id); }
+function statusOf(k) { return k >= OVERBOUGHT ? 'Overbought' : k <= OVERSOLD ? 'Oversold' : 'Neutral'; }
+function toneOf(status) { return status === 'Overbought' ? 'tone-high' : status === 'Oversold' ? 'tone-low' : 'tone-flat'; }
+function signed(pct) { return (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%'; }
+
+function render() {
+  var d = DATA[current];
+  var fmt = function (v) { return v.toFixed(d.digits); };
+
+  el('symbols').innerHTML = Object.keys(DATA).map(function (name) {
+    return '<button type="button" data-sym="' + name + '" aria-pressed="' + (name === current) + '">' + name + '</button>';
+  }).join('');
+  el('symName').textContent = current;
+  el('price').textContent = fmt(d.price);
+
+  // 1. Stochastic by timeframe
+  var nOb = 0, nOs = 0, statuses = [];
+  el('stoch').innerHTML = TIMEFRAMES.map(function (tf, i) {
+    var k = d.st[i][0], dd = d.st[i][1], status = statusOf(k);
+    statuses.push(status);
+    if (status === 'Overbought') nOb++;
+    if (status === 'Oversold') nOs++;
+    return '<div class="stoch-row">' +
+      '<div class="tf"><b>' + tf[0] + '</b><span class="small soft">' + tf[1] + '</span></div>' +
+      '<div class="right val num"><b>' + k.toFixed(1) + '</b></div>' +
+      '<div class="right val num soft">' + dd.toFixed(1) + '</div>' +
+      '<div class="bar" aria-hidden="true">' +
+        '<div class="os" style="width:' + OVERSOLD + '%"></div>' +
+        '<div class="ob" style="width:' + (100 - OVERBOUGHT) + '%"></div>' +
+        '<div class="d" style="left:' + dd + '%"></div>' +
+        '<div class="k" style="left:' + k + '%"></div>' +
+      '</div>' +
+      '<div><span class="pill ' + toneOf(status) + '">' + status + '</span></div>' +
+    '</div>';
+  }).join('');
+  el('zoneNote').textContent = 'Overbought at ' + OVERBOUGHT + ' and above, oversold at ' + OVERSOLD + ' and below, read on %K';
+
+  // 2. Classic pivot levels from the previous day's high, low and close
+  var P = (d.h + d.l + d.c) / 3, range = d.h - d.l;
+  var levels = [
+    { tag: 'R3', name: 'Resistance 3', v: d.h + 2 * (P - d.l), tone: 'tone-high' },
+    { tag: 'R2', name: 'Resistance 2', v: P + range, tone: 'tone-high' },
+    { tag: 'R1', name: 'Resistance 1', v: 2 * P - d.l, tone: 'tone-high' },
+    { tag: 'PP', name: 'Pivot point', v: P, tone: 'tone-mid' },
+    { tag: 'S1', name: 'Support 1', v: 2 * P - d.h, tone: 'tone-low' },
+    { tag: 'S2', name: 'Support 2', v: P - range, tone: 'tone-low' },
+    { tag: 'S3', name: 'Support 3', v: d.l - 2 * (d.h - P), tone: 'tone-low' }
+  ];
+  var nearest = null;
+  levels.forEach(function (x) {
+    x.pips = Math.abs(x.v - d.price) / d.pip;
+    x.side = x.v >= d.price ? 'above' : 'below';
+    if (!nearest || x.pips < nearest.pips) nearest = x;
+  });
+  var ladder = levels.concat([{ isPrice: true, v: d.price }]).sort(function (a, b) { return b.v - a.v; });
+  el('levels').innerHTML = ladder.map(function (x) {
+    if (x.isPrice) return '<div class="now"><span>Current price</span><span class="lv-price num">' + fmt(x.v) + '</span></div>';
+    return '<div class="level">' +
+      '<span class="pill tag ' + x.tone + '">' + x.tag + '</span>' +
+      '<div class="name"><b>' + x.name + '</b><span class="small soft">' + x.pips.toFixed(1) + ' pips ' + x.side + ' price</span></div>' +
+      '<span class="lv-price num">' + fmt(x.v) + '</span>' +
+    '</div>';
+  }).join('');
+  el('pivotNote').textContent = 'Classic formula from the previous day: high ' + fmt(d.h) + ', low ' + fmt(d.l) + ', close ' + fmt(d.c) + '.';
+
+  // 3. Weekly market trend
+  var w = d.w, last = w[w.length - 1], prev = w[w.length - 2];
+  var chg = (last - prev) / prev * 100;
+  var aboveMa = last > d.ma20, maUp = d.ma20 > d.ma50;
+  var trend = aboveMa && maUp ? 'Uptrend' : !aboveMa && !maUp ? 'Downtrend' : 'Sideways';
+  var trendTone = trend === 'Uptrend' ? 'tone-up' : trend === 'Downtrend' ? 'tone-high' : 'tone-mid';
+  el('trendBadge').textContent = trend;
+  el('trendBadge').className = 'trend-badge ' + trendTone;
+
+  var checks = [
+    ['W1 close vs 20-week average', fmt(last) + ' vs ' + fmt(d.ma20), aboveMa ? 'Above' : 'Below', aboveMa ? 'tone-up' : 'tone-high'],
+    ['20-week vs 50-week average', fmt(d.ma20) + ' vs ' + fmt(d.ma50), maUp ? 'Above' : 'Below', maUp ? 'tone-up' : 'tone-high'],
+    ['Change on last week', fmt(prev) + ' to ' + fmt(last), signed(chg), chg >= 0 ? 'tone-up' : 'tone-high'],
+    ['W1 Stochastic', '%K ' + d.st[6][0].toFixed(1) + ', %D ' + d.st[6][1].toFixed(1), statuses[6], toneOf(statuses[6])]
+  ];
+  el('checks').innerHTML = checks.map(function (c) {
+    return '<div class="check"><div><b>' + c[0] + '</b><span class="small soft num">' + c[1] + '</span></div>' +
+      '<span class="pill ' + c[3] + '">' + c[2] + '</span></div>';
+  }).join('');
+
+  var lo = Math.min.apply(null, w), hi = Math.max.apply(null, w);
+  el('bars').innerHTML = w.map(function (v) {
+    return '<div style="height:' + Math.round(24 + 80 * ((v - lo) / (hi - lo || 1))) + 'px"></div>';
+  }).join('');
+  el('barsNote').textContent = 'Range ' + fmt(lo) + ' to ' + fmt(hi);
+
+  // Summary tiles
+  var tiles = [
+    ['Stochastic', nOb + ' overbought, ' + nOs + ' oversold', (TIMEFRAMES.length - nOb - nOs) + ' of ' + TIMEFRAMES.length + ' timeframes neutral'],
+    ['Nearest level', nearest.tag + ' at ' + fmt(nearest.v), nearest.pips.toFixed(1) + ' pips ' + nearest.side + ' current price'],
+    ['Weekly trend', trend, 'Change on last week ' + signed(chg)]
+  ];
+  el('tiles').innerHTML = tiles.map(function (t) {
+    return '<div class="card tile"><div class="kicker">' + t[0] + '</div><div class="tile-value">' + t[1] + '</div><div class="soft" style="font-size:14px">' + t[2] + '</div></div>';
+  }).join('');
+}
+
+el('symbols').addEventListener('click', function (e) {
+  var btn = e.target.closest('button[data-sym]');
+  if (!btn) return;
+  current = btn.getAttribute('data-sym');
+  render();
+  var again = document.querySelector('button[data-sym="' + current + '"]');
+  if (again) again.focus();
+});
+
+render();
+</script>
+</body>
+</html>

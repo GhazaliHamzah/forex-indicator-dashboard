@@ -21,10 +21,15 @@ entries or targets.
 ## Repository layout
 
 ```
+index.html         Standalone dashboard page. Open it in any browser.
 design/
   canvas.json      Canvas index: title and artboard frame
   Main.dc.html     The dashboard artboard (layout, sample data, logic)
 ```
+
+`index.html` is a single self-contained file with no build step. Its sample
+data sits in the `DATA` object at the top of the script, and the overbought
+and oversold levels are the `OVERBOUGHT` and `OVERSOLD` constants.
 
 The files in `design/` are canvas design sources. They open on the design
 canvas they were made on and do not run as a standalone web page.
