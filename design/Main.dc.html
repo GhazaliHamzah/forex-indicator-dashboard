@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Indicator dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&display=swap">
+<style>
+body{margin:0}
+a{color:#7C5A16}a:hover{color:#201B12}
+button{font-family:inherit}
+button:focus-visible{outline:2px solid #1D4E89;outline-offset:2px}
+</style>
+</helmet>
+<div style="background: #FAF6EB; color: #201B12; font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.45; min-height: 1340px">
+
+<div style="display: flex; height: 3px">
+<div style="flex: 1; background: #A31C2B"></div>
+<div style="flex: 1; background: #A9791E"></div>
+<div style="flex: 1; background: #0E6E4E"></div>
+<div style="flex: 1; background: #1D4E89"></div>
+</div>
+
+<header style="background: #FDFBF4; border-bottom: 1px solid #EBE3CE; padding: 18px 32px">
+<div style="max-width: 1240px; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5A16; font-weight: 600">Draft v1 &middot; Sample data, not live</div>
+<h1 style="margin: 0; font-family: Lora, Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.2">Indicator Dashboard</h1>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{symbols}}" as="s" hint-placeholder-count="4">
+<button type="button" onClick="{{s.pick}}" aria-pressed="{{s.pressed}}" style="min-height: 44px; padding: 0 18px; border-radius: 22px; font-size: 15px; font-weight: 600; cursor: pointer; background: {{s.bg}}; color: {{s.fg}}; border: 1px solid {{s.bd}}">{{s.name}}</button>
+</sc-for>
+</div>
+</div>
+</header>
+
+<main style="max-width: 1240px; margin: 0 auto; padding: 28px 32px 40px; display: flex; flex-direction: column; gap: 24px">
+
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 12px">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px">
+<div style="font-family: Lora, Georgia, serif; font-weight: 600; font-size: 34px; line-height: 1.1">{{symName}}</div>
+<div style="font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums">{{priceStr}}</div>
+<div style="font-size: 14px; color: #5B5240">Current price</div>
+</div>
+<div style="font-size: 14px; color: #5B5240">Stochastic 14, 5, 3 &middot; Classic daily pivots &middot; Weekly trend on W1</div>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 16px">
+<sc-for list="{{tiles}}" as="t" hint-placeholder-count="3">
+<div style="flex: 1 1 260px; background: #FFFEFB; border: 1px solid #F1EBD7; border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 14px 34px rgba(60,46,12,0.08)">
+<div style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5A16; font-weight: 600">{{t.label}}</div>
+<div style="font-family: Lora, Georgia, serif; font-weight: 600; font-size: 22px; line-height: 1.25">{{t.value}}</div>
+<div style="font-size: 14px; color: #5B5240">{{t.sub}}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+
+<section style="flex: 3 1 560px; min-width: 0; background: #FFFEFB; border: 1px solid #F1EBD7; border-radius: 16px; padding: 22px 24px 20px; box-shadow: 0 14px 34px rgba(60,46,12,0.08)">
+<div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 14px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5A16; font-weight: 600">1 &middot; Stochastic by timeframe</div>
+<h2 style="margin: 0; font-family: Lora, Georgia, serif; font-weight: 600; font-size: 21px">%K 14, %D 5, Slowing 3</h2>
+</div>
+<div style="font-size: 14px; color: #5B5240">{{zoneNote}}</div>
+</div>
+<div style="overflow-x: auto">
+<div style="min-width: 540px">
+<div style="display: grid; grid-template-columns: 96px 64px 64px minmax(150px, 1fr) 128px; column-gap: 16px; align-items: center; padding: 8px 0; border-bottom: 1px solid #EBE3CE; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #5B5240; font-weight: 600">
+<div>Timeframe</div>
+<div style="text-align: right">%K</div>
+<div style="text-align: right">%D</div>
+<div>Level, 0 to 100</div>
+<div>Status</div>
+</div>
+<sc-for list="{{stoch}}" as="r" hint-placeholder-count="8">
+<div style="display: grid; grid-template-columns: 96px 64px 64px minmax(150px, 1fr) 128px; column-gap: 16px; align-items: center; padding: 11px 0; border-bottom: 1px solid #F1EBD7">
+<div style="display: flex; flex-direction: column">
+<span style="font-weight: 700; font-size: 16px">{{r.tf}}</span>
+<span style="font-size: 12px; color: #5B5240">{{r.tfName}}</span>
+</div>
+<div style="text-align: right; font-weight: 600; font-size: 16px; font-variant-numeric: tabular-nums">{{r.k}}</div>
+<div style="text-align: right; font-size: 16px; color: #5B5240; font-variant-numeric: tabular-nums">{{r.d}}</div>
+<div aria-hidden="true" style="position: relative; height: 12px; border-radius: 6px; background: #F5EFDC">
+<div style="position: absolute; left: 0; top: 0; bottom: 0; width: {{osZone}}; background: #C9D9EE; border-radius: 6px 0 0 6px"></div>
+<div style="position: absolute; right: 0; top: 0; bottom: 0; width: {{obZone}}; background: #EEC9CC; border-radius: 0 6px 6px 0"></div>
+<div style="position: absolute; top: 1px; left: {{r.dLeft}}; width: 10px; height: 10px; margin-left: -5px; box-sizing: border-box; border-radius: 50%; border: 2px solid #5B5240; background: #FFFEFB"></div>
+<div style="position: absolute; top: -4px; left: {{r.kLeft}}; width: 4px; height: 20px; margin-left: -2px; border-radius: 2px; background: #201B12"></div>
+</div>
+<div><span style="display: inline-block; padding: 4px 12px; border-radius: 14px; font-size: 13px; font-weight: 600; background: {{r.bg}}; color: {{r.fg}}; border: 1px solid {{r.bd}}">{{r.status}}</span></div>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 18px; margin-top: 14px; font-size: 13px; color: #5B5240">
+<span>Solid bar = %K</span>
+<span>Ring = %D</span>
+<span>Blue zone = oversold</span>
+<span>Red zone = overbought</span>
+</div>
+</section>
+
+<section style="flex: 2 1 360px; min-width: 0; background: #FFFEFB; border: 1px solid #F1EBD7; border-radius: 16px; padding: 22px 24px 20px; box-shadow: 0 14px 34px rgba(60,46,12,0.08)">
+<div style="display: flex; flex-direction: column; gap: 2px; margin-bottom: 14px">
+<div style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5A16; font-weight: 600">2 &middot; Pivot, support and resistance</div>
+<h2 style="margin: 0; font-family: Lora, Georgia, serif; font-weight: 600; font-size: 21px">Daily pivot levels</h2>
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<sc-for list="{{levels}}" as="lv" hint-placeholder-count="8">
+<sc-if value="{{lv.isLevel}}" hint-placeholder-val="{{true}}">
+<div style="display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; column-gap: 12px; align-items: center; padding: 9px 12px; border-radius: 10px; border: 1px solid #F1EBD7">
+<span style="display: inline-block; text-align: center; padding: 3px 0; border-radius: 8px; font-size: 13px; font-weight: 700; background: {{lv.bg}}; color: {{lv.fg}}">{{lv.tag}}</span>
+<div style="display: flex; flex-direction: column; min-width: 0">
+<span style="font-weight: 600">{{lv.name}}</span>
+<span style="font-size: 13px; color: #5B5240">{{lv.dist}}</span>
+</div>
+<span style="font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums">{{lv.price}}</span>
+</div>
+</sc-if>
+<sc-if value="{{lv.isPrice}}" hint-placeholder-val="{{false}}">
+<div style="display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; align-items: center; padding: 9px 12px; border-radius: 10px; background: #201B12; color: #FFFEFB">
+<span style="font-weight: 600">Current price</span>
+<span style="font-size: 17px; font-weight: 700; font-variant-numeric: tabular-nums">{{lv.price}}</span>
+</div>
+</sc-if>
+</sc-for>
+</div>
+<div style="margin-top: 14px; font-size: 13px; color: #5B5240">{{pivotNote}}</div>
+</section>
+
+</div>
+
+<section style="background: #FFFEFB; border: 1px solid #F1EBD7; border-radius: 16px; padding: 22px 24px; box-shadow: 0 14px 34px rgba(60,46,12,0.08)">
+<div style="display: flex; flex-wrap: wrap; gap: 28px; align-items: stretch">
+<div style="flex: 1 1 250px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<div style="font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: #7C5A16; font-weight: 600">3 &middot; Weekly market trend</div>
+<h2 style="margin: 0; font-family: Lora, Georgia, serif; font-weight: 600; font-size: 21px">W1 trend status</h2>
+</div>
+<div><span style="display: inline-block; padding: 10px 22px; border-radius: 12px; font-family: Lora, Georgia, serif; font-size: 26px; font-weight: 700; background: {{trendBg}}; color: {{trendFg}}; border: 1px solid {{trendBd}}">{{trendStatus}}</span></div>
+<div style="font-size: 14px; color: #5B5240">{{trendRule}}</div>
+</div>
+<div style="flex: 2 1 320px; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{checks}}" as="c" hint-placeholder-count="4">
+<div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 9px 12px; border: 1px solid #F1EBD7; border-radius: 10px">
+<div style="display: flex; flex-direction: column">
+<span style="font-weight: 600">{{c.label}}</span>
+<span style="font-size: 13px; color: #5B5240; font-variant-numeric: tabular-nums">{{c.detail}}</span>
+</div>
+<span style="display: inline-block; padding: 4px 12px; border-radius: 14px; font-size: 13px; font-weight: 600; background: {{c.bg}}; color: {{c.fg}}; border: 1px solid {{c.bd}}">{{c.value}}</span>
+</div>
+</sc-for>
+</div>
+<div style="flex: 1 1 240px; display: flex; flex-direction: column; gap: 8px">
+<div style="font-weight: 600">Last 12 weekly closes</div>
+<div aria-hidden="true" style="display: flex; align-items: flex-end; gap: 6px; height: 110px; padding: 0 2px; border-bottom: 1px solid #EBE3CE">
+<sc-for list="{{bars}}" as="b" hint-placeholder-count="12">
+<div style="flex: 1; height: {{b.h}}; background: {{b.color}}; border-radius: 4px 4px 0 0"></div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; font-size: 13px; color: #5B5240">
+<span>12 weeks ago</span>
+<span>This week</span>
+</div>
+<div style="font-size: 13px; color: #5B5240; font-variant-numeric: tabular-nums">{{barsNote}}</div>
+</div>
+</div>
+</section>
+
+<div style="font-size: 13px; color: #5B5240; border-top: 1px solid #EBE3CE; padding-top: 14px">Indicator readings only. No buy or sell calls, entries or targets. All figures on this draft are sample data for layout review.</div>
+
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"obLevel":{"editor":"int","default":80,"min":60,"max":95,"section":"Stochastic zones"},"osLevel":{"editor":"int","default":20,"min":5,"max":40,"section":"Stochastic zones"},"$preview":{"width":1360,"height":1340}}'>
+class Component extends DCLogic {
+  state = { sym: 'EURUSD' };
+
+  renderVals() {
+    const ob = Number(this.props.obLevel ?? 80);
+    const os = Number(this.props.osLevel ?? 20);
+    const sym = this.state.sym;
+
+    const DATA = {
+      EURUSD: { digits: 5, pip: 0.0001, price: 1.0878, h: 1.0892, l: 1.0824, c: 1.0861,
+        st: [[86.4,81.2],[83.1,78.5],[74.6,70.3],[68.2,61.7],[55.3,49.8],[61.9,58.4],[72.5,66.1],[44.8,47.2]],
+        w: [1.0712,1.0745,1.0731,1.0768,1.0790,1.0774,1.0812,1.0835,1.0821,1.0850,1.0843,1.0878], ma20: 1.0764, ma50: 1.0702 },
+      GBPUSD: { digits: 5, pip: 0.0001, price: 1.2689, h: 1.2748, l: 1.2671, c: 1.2702,
+        st: [[14.2,18.9],[17.8,22.4],[26.5,31.0],[33.4,38.2],[41.7,45.9],[38.6,42.3],[29.4,35.8],[52.1,55.6]],
+        w: [1.2905,1.2880,1.2862,1.2871,1.2834,1.2810,1.2826,1.2779,1.2755,1.2760,1.2718,1.2689], ma20: 1.2841, ma50: 1.2893 },
+      USDJPY: { digits: 3, pip: 0.01, price: 153.47, h: 153.84, l: 152.61, c: 153.12,
+        st: [[58.3,54.1],[66.7,60.2],[79.2,73.8],[84.5,80.9],[88.1,85.3],[81.6,77.4],[76.3,71.9],[69.8,64.5]],
+        w: [149.20,149.85,150.40,150.10,151.30,151.95,151.60,152.40,152.90,152.55,153.10,153.47], ma20: 150.82, ma50: 148.95 },
+      XAUUSD: { digits: 2, pip: 0.1, price: 2660.40, h: 2684.50, l: 2651.20, c: 2672.80,
+        st: [[22.6,27.3],[18.4,21.7],[15.9,19.2],[24.8,29.5],[36.2,40.7],[47.5,51.3],[63.4,60.8],[78.9,75.2]],
+        w: [2648.00,2671.00,2655.00,2690.00,2662.00,2640.00,2675.00,2684.00,2651.00,2668.00,2679.00,2660.40], ma20: 2664.10, ma50: 2612.30 }
+    };
+    const TFS = [['M5','5 minutes'],['M15','15 minutes'],['M30','30 minutes'],['H1','1 hour'],['H4','4 hours'],['D1','Daily'],['W1','Weekly'],['MN','Monthly']];
+    const TONE = {
+      high: { bg: '#FAEBEB', fg: '#A31C2B', bd: '#E7BFC3' },
+      low: { bg: '#EEF3FA', fg: '#1D4E89', bd: '#BFD0E6' },
+      flat: { bg: '#FFFEFB', fg: '#5B5240', bd: '#EBE3CE' },
+      up: { bg: '#ECF7F0', fg: '#0E6E4E', bd: '#BFDDCF' },
+      mid: { bg: '#F5EFDC', fg: '#7C5A16', bd: '#E2D5AE' }
+    };
+
+    const d = DATA[sym];
+    const fmt = (v) => v.toFixed(d.digits);
+    const statusOf = (k) => (k >= ob ? 'Overbought' : k <= os ? 'Oversold' : 'Neutral');
+    const toneOf = (s) => (s === 'Overbought' ? TONE.high : s === 'Oversold' ? TONE.low : TONE.flat);
+
+    const symbols = Object.keys(DATA).map((name) => {
+      const on = name === sym;
+      return {
+        name,
+        pressed: on,
+        bg: on ? '#201B12' : '#FFFEFB',
+        fg: on ? '#FFFEFB' : '#201B12',
+        bd: on ? '#201B12' : '#EBE3CE',
+        pick: () => this.setState({ sym: name })
+      };
+    });
+
+    let nOb = 0;
+    let nOs = 0;
+    const stoch = TFS.map((tf, i) => {
+      const k = d.st[i][0];
+      const dd = d.st[i][1];
+      const status = statusOf(k);
+      if (status === 'Overbought') nOb += 1;
+      if (status === 'Oversold') nOs += 1;
+      const tone = toneOf(status);
+      return {
+        tf: tf[0], tfName: tf[1],
+        k: k.toFixed(1), d: dd.toFixed(1),
+        kLeft: k + '%', dLeft: dd + '%',
+        status, bg: tone.bg, fg: tone.fg, bd: tone.bd
+      };
+    });
+    const nNeutral = TFS.length - nOb - nOs;
+
+    const P = (d.h + d.l + d.c) / 3;
+    const range = d.h - d.l;
+    const raw = [
+      { tag: 'R3', name: 'Resistance 3', v: d.h + 2 * (P - d.l), tone: TONE.high },
+      { tag: 'R2', name: 'Resistance 2', v: P + range, tone: TONE.high },
+      { tag: 'R1', name: 'Resistance 1', v: 2 * P - d.l, tone: TONE.high },
+      { tag: 'PP', name: 'Pivot point', v: P, tone: TONE.mid },
+      { tag: 'S1', name: 'Support 1', v: 2 * P - d.h, tone: TONE.low },
+      { tag: 'S2', name: 'Support 2', v: P - range, tone: TONE.low },
+      { tag: 'S3', name: 'Support 3', v: d.l - 2 * (d.h - P), tone: TONE.low }
+    ];
+    let nearest = null;
+    const levelRows = raw.map((x) => {
+      const pips = Math.abs(x.v - d.price) / d.pip;
+      const side = x.v >= d.price ? 'above' : 'below';
+      const row = {
+        isLevel: true, isPrice: false, v: x.v,
+        tag: x.tag, name: x.name, price: fmt(x.v),
+        dist: pips.toFixed(1) + ' pips ' + side + ' price',
+        bg: x.tone.bg, fg: x.tone.fg, pips, side
+      };
+      if (!nearest || pips < nearest.pips) nearest = row;
+      return row;
+    });
+    const levels = levelRows
+      .concat([{ isLevel: false, isPrice: true, v: d.price, price: fmt(d.price) }])
+      .sort((a, b) => b.v - a.v);
+
+    const w = d.w;
+    const last = w[w.length - 1];
+    const prev = w[w.length - 2];
+    const chg = ((last - prev) / prev) * 100;
+    const aboveMa = last > d.ma20;
+    const maUp = d.ma20 > d.ma50;
+    const trendStatus = aboveMa && maUp ? 'Uptrend' : !aboveMa && !maUp ? 'Downtrend' : 'Sideways';
+    const trendTone = trendStatus === 'Uptrend' ? TONE.up : trendStatus === 'Downtrend' ? TONE.high : TONE.mid;
+    const w1 = stoch[6];
+    const checks = [
+      { label: 'W1 close vs 20-week average', detail: fmt(last) + ' vs ' + fmt(d.ma20), value: aboveMa ? 'Above' : 'Below', tone: aboveMa ? TONE.up : TONE.high },
+      { label: '20-week vs 50-week average', detail: fmt(d.ma20) + ' vs ' + fmt(d.ma50), value: maUp ? 'Above' : 'Below', tone: maUp ? TONE.up : TONE.high },
+      { label: 'Change on last week', detail: fmt(prev) + ' to ' + fmt(last), value: (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%', tone: chg >= 0 ? TONE.up : TONE.high },
+      { label: 'W1 Stochastic', detail: '%K ' + w1.k + ', %D ' + w1.d, value: w1.status, tone: toneOf(w1.status) }
+    ].map((c) => ({ label: c.label, detail: c.detail, value: c.value, bg: c.tone.bg, fg: c.tone.fg, bd: c.tone.bd }));
+
+    const lo = Math.min.apply(null, w);
+    const hi = Math.max.apply(null, w);
+    const bars = w.map((v, i) => ({
+      h: Math.round(24 + 80 * ((v - lo) / (hi - lo || 1))) + 'px',
+      color: i === w.length - 1 ? '#7C5A16' : '#D9CFB0'
+    }));
+
+    const tiles = [
+      { label: 'Stochastic', value: nOb + ' overbought, ' + nOs + ' oversold', sub: nNeutral + ' of ' + TFS.length + ' timeframes neutral' },
+      { label: 'Nearest level', value: nearest.tag + ' at ' + nearest.price, sub: nearest.pips.toFixed(1) + ' pips ' + nearest.side + ' current price' },
+      { label: 'Weekly trend', value: trendStatus, sub: 'Change on last week ' + (chg >= 0 ? '+' : '') + chg.toFixed(2) + '%' }
+    ];
+
+    return {
+      symbols, symName: sym, priceStr: fmt(d.price),
+      tiles, stoch, levels, checks, bars,
+      osZone: os + '%', obZone: (100 - ob) + '%',
+      zoneNote: 'Overbought at ' + ob + ' and above, oversold at ' + os + ' and below, read on %K',
+      pivotNote: 'Classic formula from the previous day: high ' + fmt(d.h) + ', low ' + fmt(d.l) + ', close ' + fmt(d.c) + '.',
+      trendStatus, trendBg: trendTone.bg, trendFg: trendTone.fg, trendBd: trendTone.bd,
+      trendRule: 'Uptrend when the weekly close is above the 20-week average and the 20-week is above the 50-week. Downtrend when both are below. Otherwise sideways.',
+      barsNote: 'Range ' + fmt(lo) + ' to ' + fmt(hi)
+    };
+  }
+}
+</script>
+</body>
+</html>
